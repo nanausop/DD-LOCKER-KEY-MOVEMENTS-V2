@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DD Locker: Key Movements Record</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DD Locker: Key Movements Record</h1>
+        <form id="lockerForm">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="icNo">IC No. (12 digits)</label>
+            <input type="text" id="icNo" name="icNo" pattern="\d{12}" required title="Please enter exactly 12 digits">
+
+            <label for="task">Task</label>
+            <select id="task" name="task" required>
+                <option value="">-- Please select --</option>
+                <option value="Unlocking DD Locker">Unlocking DD Locker</option>
+                <option value="Returning the Key">Returning the Key</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('lockerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const icNo = document.getElementById('icNo').value;
+            const task = document.getElementById('task').value;
+            const timestamp = new Date().toLocaleString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' });
+
+            let data = { fullName, icNo, task };
+            if (task === 'Unlocking DD Locker') {
+                data.unlockTime = timestamp;
+            } else if (task === 'Returning the Key') {
+                data.returnTime = timestamp;
+            }
+
+            await fetch('https://script.google.com/macros/s/AKfycbxgmL62EOZ45k2RgHh4eWLnQxOhoA4uMzX836s_dDo_qDdOWCnhexCm8slsBeSUVIXD/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (task === 'Unlocking DD Locker') {
+                window.location.href = 'confirm.html?ic=' + icNo;
+            } else {
+                window.location.href = 'thankyou.html';
+            }
+        });
+    </script>
+</body>
+</html>
